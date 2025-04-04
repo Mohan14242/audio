@@ -1,9 +1,7 @@
 name: Transcribe MP3 Files
 
 on:
-  push:
-    paths:
-      - 'audio/*.mp3'
+  workflow_dispatch:  # ✅ Enables manual trigger
 
 jobs:
   transcribe:

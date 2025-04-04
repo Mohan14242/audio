@@ -1,0 +1,39 @@
+name: Transcribe MP3 Files
+
+on:
+  push:
+    paths:
+      - 'audio/*.mp3'
+
+jobs:
+  transcribe:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set Up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y ffmpeg
+          pip install openai-whisper
+
+      - name: Transcribe All MP3 Files
+        run: |
+          mkdir -p transcripts
+          for file in audio/*.mp3; do
+            echo "Transcribing $file..."
+            whisper "$file" --language English --output_dir transcripts --output_format txt
+          done
+
+      - name: Upload Transcripts
+        uses: actions/upload-artifact@v4
+        with:
+          name: mp3_transcripts
+          path: transcripts/
